@@ -5,6 +5,8 @@ package tn.esprit.tpprojet.Repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import tn.esprit.tpprojet.Entities.Entreprise;
 
+import java.util.List;
+
 /**
  * REPOSITORY EXPLANATION:
  * -----------------------
@@ -38,6 +40,9 @@ import tn.esprit.tpprojet.Entities.Entreprise;
  */
 
 public interface EntrpriseRepository extends JpaRepository<Entreprise, Long> {
+
+    Entreprise readByNom(String nom);
+List<Entreprise> streamByNomContainsOrderByAdresseAsc(String nom);
     // No methods needed here!
     // JpaRepository already provides:
     // - save() - insert or update

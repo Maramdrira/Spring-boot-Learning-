@@ -4,11 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Generated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.tpprojet.Entities.Domaine;
+import tn.esprit.tpprojet.Entities.Entreprise;
+import tn.esprit.tpprojet.Entities.Equipe;
 import tn.esprit.tpprojet.Entities.Projet;
 import tn.esprit.tpprojet.Services.IProjetServices;
 import tn.esprit.tpprojet.Services.ProjetServiceImpl;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * CONTROLLER EXPLANATION:
@@ -67,8 +71,8 @@ public class ProjetRestController {
      * This follows Dependency Inversion Principle (DIP)
      * The controller depends on abstraction (interface), not concrete implementation
      */
-    @Autowired  // Injects the Service bean (ProjetServiceImpl)
     private IProjetServices projetServices;
+
 
     // Note: @AllArgsConstructor would generate a constructor that Spring could use
     // for constructor injection (better practice than @Autowired on field)
@@ -96,7 +100,16 @@ public class ProjetRestController {
     Projet addProjet(@RequestBody Projet projet){  // @RequestBody binds JSON body to Java object
         return projetServices.ajouterProjet(projet);  // Delegate to service layer
     }
+    @PutMapping("/affecterProjetDetailToProjet/{idP}/{idPD}")
+    void affectAProjectDetailToAProject(@PathVariable("idP") long idProjet, @PathVariable("idPD") long idProjetDetail){
+        projetServices.assignProjetDetailToProjet(idProjet, idProjetDetail);
+    }
 
+    @GetMapping("/entreprise/afficherSelonNom/{nom}")
+    Entreprise afficherSelonNom (@PathVariable("nom") String nom)
+    {
+        return projetServices.afficherSelonNom(nom);
+    }
     /**
      * ENDPOINT: GET /Projet/getProjet
      * --------------------------------
@@ -180,7 +193,30 @@ public class ProjetRestController {
     {
         projetServices.supprimerProjet(idProjet);
     }
+
+
+@GetMapping("afficherTrieAddr/{nom}")
+    List<Entreprise> afficherEntrepriseContenantMotTriParAdd(@PathVariable("nom") String nom)
+{
+    return projetServices.afficherEntrepriseContenantMotTriParAdd(nom);
 }
+
+    @GetMapping("/verifierExistanceEquipe/{nomE}")
+    boolean verifierExistanceEquipe(@PathVariable ("nomE") String nom){
+        return projetServices.verifierEquipe(nom);
+    }
+
+
+    @GetMapping("/AffiEquipeTriee/{domaine}")
+    List<Equipe> AffEquipeContenntintUnDomainTrieeParEntNom(@PathVariable ("domaine") Domaine domaine){
+        return projetServices.AffEquipeContenntintUnDomainTrieeParEntNom(domaine);
+    }
+
+
+}
+
+
+
 
 // ======================================================================
 // HTTP METHODS & ANNOTATIONS SUMMARY:

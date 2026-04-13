@@ -1,10 +1,13 @@
 package tn.esprit.tpfoyer.Services;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tn.esprit.tpfoyer.Entities.Chambre;
+import tn.esprit.tpfoyer.Entities.Reservation;
 import tn.esprit.tpfoyer.Repositories.ChambreRepository;
+import tn.esprit.tpfoyer.Repositories.ReservationRepository;
 
 import java.util.List;
 
@@ -13,21 +16,22 @@ import java.util.List;
 public class ChambreServiceImpl implements IChambreServices {
     @Autowired
     private ChambreRepository chambreRepository;
-
-
-    @Override
-    public List<Chambre> afficherAllChambres() {
-        return chambreRepository.findAll();
-    }
-
-    @Override
-    public Chambre afficherChambre(Long idChambre) {
-        return chambreRepository.findById(idChambre).orElse(null);
-    }
+    @Autowired
+    private ReservationRepository reservationRepository;
 
     @Override
     public Chambre ajouterChambre(Chambre chambre) {
         return chambreRepository.save(chambre);
+    }
+
+    @Override
+    public List<Chambre> afficherChambres() {
+        return chambreRepository.findAll();
+    }
+
+    @Override
+    public Chambre afficherChambreSelonID(long idChambre) {
+        return chambreRepository.findById(idChambre).get();
     }
 
     @Override
@@ -36,8 +40,32 @@ public class ChambreServiceImpl implements IChambreServices {
     }
 
     @Override
-    public void supprimerChambre(Long idChambre) {
+    public void supprimerChambre(long idChambre) {
         chambreRepository.deleteById(idChambre);
-
     }
+    @Transactional  // ← ADD THIS
+    @Override
+    public Chambre addChambreAndReservation(Chambre chambre) {
+        return chambreRepository.save(chambre);
+    }
+
+    @Override
+    public void assignReservationToChambre(long idChambre, long idReservation) {
+        Chambre chambre = chambreRepository.findById(idChambre).get();
+        Reservation reservation = reservationRepository.findById(idReservation).get();
+
+        chambre.getReservations().add(reservation);
+        chambreRepository.save(chambre);
+    }
+
+    @Override
+    public void unassignReservationFromChambre(long idChambre, long idReservation) {
+        Chambre chambre = chambreRepository.findById(idChambre).get();
+        Reservation reservation = reservationRepository.findById(idReservation).get();
+        // Enlever le fils (Reservation) du parent (Chambre)
+        chambre.getReservations().remove(reservation);
+        chambreRepository.save(chambre);
+    }
+
+
 }

@@ -13,35 +13,46 @@ import java.util.List;
 public class BlocRestController {
 
     @Autowired
-     private IBlocServices blocServices;
+    private IBlocServices blocServices;
 
-    // http://localhost:8089/tpfoyer/Bloc/afficherTous
-    @GetMapping("/afficherTous")
-    public List<Bloc> afficherTousLesBlocs() {
-        return blocServices.afficherAllBlocs();
-    }
-
-    // http://localhost:8089/tpfoyer/Bloc/afficher/{id}
-    @GetMapping("/afficher/{id}")
-    public Bloc afficherBloc(@PathVariable("id") Long idBloc) {
-        return blocServices.afficherBloc(idBloc);
-    }
-
-    // http://localhost:8089/tpfoyer/Bloc/ajouter
-    @PostMapping("/ajouter")
-    public Bloc ajouterBloc(@RequestBody Bloc bloc) {
+    @PostMapping("/addBloc")
+    Bloc addBloc(@RequestBody Bloc bloc){
         return blocServices.ajouterBloc(bloc);
     }
 
-    // http://localhost:8089/tpfoyer/Bloc/modifier
-    @PutMapping("/modifier")
-    public Bloc modifierBloc(@RequestBody Bloc bloc) {
+    @GetMapping("/getBlocs")
+    List<Bloc> getBlocs(){
+        return blocServices.afficherBlocs();
+    }
+
+    @GetMapping("/getBlocById/{idB}")
+    Bloc getBlocById(@PathVariable("idB") long idBloc){
+        return blocServices.afficherBlocSelonID(idBloc);
+    }
+
+    @PutMapping("/updateBloc")
+    Bloc updateBloc(@RequestBody Bloc bloc){
         return blocServices.modifierBloc(bloc);
     }
 
-    // http://localhost:8089/tpfoyer/Bloc/supprimer/{id}
-    @DeleteMapping("/supprimer/{id}")
-    public void supprimerBloc(@PathVariable("id") Long idBloc) {
-        blocServices.removeBloc(idBloc);
+    @DeleteMapping("/deleteBloc/{idB}")
+    void DeleteBloc(@PathVariable("idB") long idBloc){
+        blocServices.supprimerBloc(idBloc);
+    }
+
+    @PostMapping("/ajouterBlocEtFoyer")
+    public Bloc addBlocAndFoyer(@RequestBody Bloc bloc) {
+        return blocServices.addBlocAndFoyer(bloc);
+    }
+
+    @PutMapping("/affecterBlocToFoyer/{idBloc}/{idFoyer}")
+    public void assignBlocToFoyer(@PathVariable("idBloc") long idBloc,
+                                  @PathVariable("idFoyer") long idFoyer) {
+        blocServices.assignBlocToFoyer(idBloc, idFoyer);
+    }
+
+    @PutMapping("/desaffecterBlocDeFoyer/{idBloc}")
+    public void unassignBlocFromFoyer(@PathVariable("idBloc") long idBloc) {
+        blocServices.unassignBlocFromFoyer(idBloc);
     }
 }

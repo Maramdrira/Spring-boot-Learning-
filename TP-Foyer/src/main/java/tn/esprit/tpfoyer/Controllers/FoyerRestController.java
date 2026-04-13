@@ -43,4 +43,24 @@ public class FoyerRestController {
     public void supprimerFoyer(@PathVariable("id") Long idFoyer) {
         foyerServices.supprimerFoyer(idFoyer);
     }
+
+    // ==================== TP8 - EXO 1 : Affectations / Désaffectations ====================
+
+    // http://localhost:8089/tpFoyer/Foyer/ajouter-foyer-et-bloc
+    @PostMapping("/ajouter-foyer-et-bloc")
+    public Foyer ajouterFoyerEtBloc(@RequestBody Foyer foyer) {
+        return foyerServices.ajouterFoyerEtBloc(foyer);
+    }
+
+    // http://localhost:8089/tpFoyer/Foyer/affecter-bloc-a-foyer/{idBloc}/{idFoyer}
+    @PutMapping("/affecter-bloc-a-foyer/{idBloc}/{idFoyer}")
+    public void affecterBlocAFoyer(@PathVariable Long idBloc, @PathVariable Long idFoyer) {
+        foyerServices.affecterBlocAFoyer(idBloc, idFoyer);
+    }
+
+    // http://localhost:8089/tpFoyer/Foyer/desaffecter-bloc-de-foyer/{idBloc}/{idFoyer}
+    @PutMapping("/desaffecter-bloc-de-foyer/{idBloc}/{idFoyer}")
+    public void desaffecterBlocDeFoyer(@PathVariable Long idBloc, @PathVariable Long idFoyer) {
+        foyerServices.desaffecterBlocDeFoyer(idBloc, idFoyer);
+    }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -29,10 +30,50 @@ public class Equipe {
     // Other cascade options: PERSIST, MERGE, REMOVE, REFRESH, DETACH
     Entreprise entreprise;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public Domaine getDomaine() {
+        return domaine;
+    }
+
+    public void setDomaine(Domaine domaine) {
+        this.domaine = domaine;
+    }
+
+    public Entreprise getEntreprise() {
+        return entreprise;
+    }
+
+    public void setEntreprise(Entreprise entreprise) {
+        this.entreprise = entreprise;
+    }
+
+    public Set<Projet> getProjets() {
+        return projets;
+    }
+
+    public void setProjets(Set<Projet> projets) {
+        this.projets = projets;
+    }
+
     @ManyToMany(cascade = CascadeType.ALL)  // Many teams can work on many projects.
     // Creates join table equipe_projets.
 
-    Set<Projet> projets;  // Set ensures no duplicate projects.
+    Set<Projet> projets =new HashSet<>();  // Set ensures no duplicate projects.
     // Can also use List if order matters or duplicates allowed
 }
 

@@ -5,9 +5,14 @@ import tn.esprit.tpfoyer.Entities.Bloc;
 import java.util.List;
 
 public interface IBlocServices {
-    List<Bloc> afficherAllBlocs();
-    Bloc afficherBloc(Long idBloc);
     Bloc ajouterBloc(Bloc bloc);
+    List<Bloc> afficherBlocs();
+    Bloc afficherBlocSelonID(long idBloc);
     Bloc modifierBloc(Bloc bloc);
-    void removeBloc(Long idBloc);
+    void supprimerBloc(long idBloc);
+
+    Bloc addBlocAndFoyer(Bloc bloc);                          // Exo1 - Cas 1
+    void assignBlocToFoyer(long idBloc, long idFoyer);       // Exo1 - Cas 2
+    void unassignBlocFromFoyer(long idBloc);
+
 }

@@ -17,19 +17,13 @@ import java.util.Set;
 public class Etudiant  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long idEtudiant;
-
-    String nomEt;
-    String prenomEt;
-    Long cin;
-    String ecole;
-
-    @Temporal(TemporalType.DATE)
-    Date dateNaissance;
+    private Long idEtudiant;
+    private String nomEt;
+    private String prenomEt;
+    private Long cin;
+    private String ecole;
+    private Date dateNaissance;
 
     @ManyToMany(mappedBy = "etudiants")
     Set<Reservation> reservations;
-
-
-
 }

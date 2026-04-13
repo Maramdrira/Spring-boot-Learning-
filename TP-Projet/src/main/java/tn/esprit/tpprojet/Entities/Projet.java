@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity  // Marks this class as a JPA entity mapped to database table
@@ -32,7 +33,7 @@ public class Projet {
     @ManyToMany(mappedBy = "projets")  // Many-to-Many relationship with Equipe.
     // "mappedBy" indicates this is the inverse side (Equipe owns the relationship).
     // No join table created here because it's already created in Equipe class
-    Set<Equipe> equipes;  // Set of teams working on this project (no duplicates)
+    Set<Equipe> equipes = new HashSet<>();  // Set of teams working on this project (no duplicates)
 }
 
 // ======================================================================

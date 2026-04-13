@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -17,14 +18,33 @@ import java.util.Set;
 public class Bloc  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-     Long idBloc;
+    private Long idBloc;
+    private String nomBloc;
+    private Long capaciteBloc;
 
-     String nomBloc;
-     Long capaciteBloc;
+    @ManyToOne(cascade = CascadeType.ALL)
+    Foyer foyer;
 
-     @ManyToOne
-     Foyer foyer;
+    @OneToMany(mappedBy = "bloc")
+    Set<Chambre> chambres = new HashSet<Chambre>();
 
-     @OneToMany(mappedBy = "bloc")
-     Set<Chambre> chambres;
+    public Long getIdBloc() {
+        return idBloc;
+    }
+
+    public String getNomBloc() {
+        return nomBloc;
+    }
+
+    public Long getCapaciteBloc() {
+        return capaciteBloc;
+    }
+
+    public Foyer getFoyer() {
+        return foyer;
+    }
+
+    public Set<Chambre> getChambres() {
+        return chambres;
+    }
 }

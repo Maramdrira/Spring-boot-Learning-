@@ -1,9 +1,12 @@
 package tn.esprit.tpfoyer.Entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -12,19 +15,15 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-
-public class Reservation  {
+public class Reservation {
     @Id
-     Long idReservation;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idReservation;
 
-    @Temporal(TemporalType.DATE)
-    Date anneeUniversitaire;
-
-    boolean estValide;
-
+    private Date anneeUniversitaire;
+    private Boolean estValide;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    Set<Etudiant> etudiants;
-
-//mapped by file + cascade fel pere
+    @JsonIgnore  // ← ADD THIS to break the loop
+    Set<Etudiant> etudiants = new HashSet<Etudiant>();
 }

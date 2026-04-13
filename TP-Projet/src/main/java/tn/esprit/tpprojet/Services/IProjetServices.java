@@ -1,7 +1,11 @@
 package tn.esprit.tpprojet.Services;
 
+import tn.esprit.tpprojet.Entities.Domaine;
+import tn.esprit.tpprojet.Entities.Entreprise;
+import tn.esprit.tpprojet.Entities.Equipe;
 import tn.esprit.tpprojet.Entities.Projet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * SERVICE LAYER EXPLANATION:
@@ -73,6 +77,16 @@ public interface IProjetServices {
      *   projetService.supprimerProjet(1L); // Deletes project with ID 1
      */
     void supprimerProjet (long idProjet);
+
+    void assignProjetDetailToProjet(long idProjet, long idProjetDetail);
+
+    Entreprise afficherSelonNom(String non);
+
+    List<Entreprise> afficherEntrepriseContenantMotTriParAdd(String nom);
+
+    boolean verifierEquipe(String nom);
+
+    List<Equipe> AffEquipeContenntintUnDomainTrieeParEntNom(Domaine domain);
 }
 
 // ======================================================================

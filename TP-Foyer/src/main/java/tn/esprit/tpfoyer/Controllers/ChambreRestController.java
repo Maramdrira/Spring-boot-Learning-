@@ -15,33 +15,45 @@ public class ChambreRestController {
     @Autowired
     private IChambreServices chambreServices;
 
-    // http://localhost:8089/tpFoyer/Chambre/afficherTous
-    @GetMapping("/afficherTous")
-    public List<Chambre> afficherTousLesChambres() {
-        return chambreServices.afficherAllChambres();
-    }
-
-    // http://localhost:8089/tpFoyer/Chambre/afficher/{id}
-    @GetMapping("/afficher/{id}")
-    public Chambre afficherChambre(@PathVariable("id") Long idChambre) {
-        return chambreServices.afficherChambre(idChambre);
-    }
-
-    // http://localhost:8089/tpFoyer/Chambre/ajouter
-    @PostMapping("/ajouter")
-    public Chambre ajouterChambre(@RequestBody Chambre chambre) {
+    @PostMapping("/addChambre")
+    Chambre addChambre(@RequestBody Chambre chambre){
         return chambreServices.ajouterChambre(chambre);
     }
 
-    // http://localhost:8089/tpFoyer/Chambre/modifier
-    @PutMapping("/modifier")
-    public Chambre modifierChambre(@RequestBody Chambre chambre) {
+    @GetMapping("/getChambres")
+    List<Chambre> getChambres(){
+        return chambreServices.afficherChambres();
+    }
+
+    @GetMapping("/getChambreById/{idC}")
+    Chambre getChambreById(@PathVariable("idC") long idChambre){
+        return chambreServices.afficherChambreSelonID(idChambre);
+    }
+
+    @PutMapping("/updateChambre")
+    Chambre updateChambre(@RequestBody Chambre chambre){
         return chambreServices.modifierChambre(chambre);
     }
 
-    // http://localhost:8089/tpFoyer/Chambre/supprimer/{id}
-    @DeleteMapping("/supprimer/{id}")
-    public void supprimerChambre(@PathVariable("id") Long idChambre) {
+    @DeleteMapping("/deleteChambre/{idC}")
+    void DeleteChambre(@PathVariable("idC") long idChambre){
         chambreServices.supprimerChambre(idChambre);
+    }
+
+    @PostMapping("/ajouterChambreEtReservation")
+    public Chambre addChambreAndReservation(@RequestBody Chambre chambre) {
+        return chambreServices.addChambreAndReservation(chambre);
+    }
+
+    @PutMapping("/affecterReservationToChambre/{idChambre}/{idReservation}")
+    public void assignReservationToChambre(@PathVariable("idChambre") long idChambre,
+                                           @PathVariable("idReservation") long idReservation) {
+        chambreServices.assignReservationToChambre(idChambre, idReservation);
+    }
+
+    @PutMapping("/desaffecterReservationDeChambre/{idChambre}/{idReservation}")
+    public void unassignReservationFromChambre(@PathVariable("idChambre") long idChambre,
+                                               @PathVariable("idReservation") long idReservation) {
+        chambreServices.unassignReservationFromChambre(idChambre, idReservation);
     }
 }

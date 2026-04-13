@@ -1,5 +1,6 @@
 package tn.esprit.tpprojet.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +9,7 @@ import java.util.Set;
 
 @Entity  // Marks this class as a JPA entity (will be mapped to a database table)
 @Getter  // Lombok - generates getters for all fields
-@Setter  // Lombok - generates setters for all fields  
+@Setter  // Lombok - generates setters for all fields
 @AllArgsConstructor  // Lombok - generates constructor with all arguments
 @NoArgsConstructor   // Lombok - generates empty constructor
 @FieldDefaults(level = AccessLevel.PRIVATE)  // Lombok - makes all fields private by default
@@ -26,6 +27,8 @@ public class Entreprise {
      * One company can have multiple teams
      * mappedBy = "entreprise" means the Equipe entity owns the relationship (has the foreign key)
      */
+
+    @JsonIgnore
     @OneToMany(mappedBy = "entreprise")  // mappedBy prevents duplicate foreign key column
             Set<Equipe> equipes;  // Set of teams belonging to this company (no duplicates)
 }

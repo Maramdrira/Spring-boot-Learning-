@@ -4,9 +4,13 @@ import tn.esprit.tpfoyer.Entities.Chambre;
 import java.util.List;
 
 public interface IChambreServices {
-    List<Chambre> afficherAllChambres();
-    Chambre afficherChambre(Long idChambre);
     Chambre ajouterChambre(Chambre chambre);
+    List<Chambre> afficherChambres();
+    Chambre afficherChambreSelonID(long idChambre);
     Chambre modifierChambre(Chambre chambre);
-    void supprimerChambre(Long idChambre);
+    void supprimerChambre(long idChambre);
+
+    Chambre addChambreAndReservation(Chambre chambre);
+    void assignReservationToChambre(long idChambre, long idReservation);
+    void unassignReservationFromChambre(long idChambre, long idReservation);
 }

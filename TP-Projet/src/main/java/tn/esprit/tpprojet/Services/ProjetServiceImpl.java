@@ -2,11 +2,15 @@ package tn.esprit.tpprojet.Services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
-import tn.esprit.tpprojet.Entities.Projet;
+import tn.esprit.tpprojet.Entities.*;
+import tn.esprit.tpprojet.Repositories.EntrpriseRepository;
+import tn.esprit.tpprojet.Repositories.EquipeRepository;
 import tn.esprit.tpprojet.Repositories.ProjetRepository;
-
+import tn.esprit.tpprojet.Repositories.ProjetDetailRepository;
 import java.util.List;
+import java.util.Set;
 
 @Service  // Marks this class as a Spring Service bean (business logic layer)
 @AllArgsConstructor  // Lombok: generates constructor with all arguments (for constructor injection)
@@ -22,10 +26,15 @@ public class ProjetServiceImpl implements IProjetServices{
      *
      * 3 TYPES OF INJECTION:
      */
-
+    @Autowired
+    private  ProjetDetailRepository projetDetailRepository;
     // ========== TYPE 1: Champ INJECTION ==========
     @Autowired  // Tells Spring to inject the repository here
     private ProjetRepository projetRepository;
+    @Autowired
+    private EntrpriseRepository entrpriseRepository;
+    @Autowired
+    private EquipeRepository equipeRepository;
 
     /*
      * Champ INJECTION (current - @Autowired on field)
@@ -158,6 +167,39 @@ public class ProjetServiceImpl implements IProjetServices{
         //delte by id id fel url ama delete lezmha id fi wst obj bech y3rfhaa
 
     }
+
+    @Override
+    public void assignProjetDetailToProjet(long idProjet, long idProjetDetail) {
+        //récuperer projet et projet detail
+        Projet projet = projetRepository.findById(idProjet).get();
+        ProjetDetail projetDetail = projetDetailRepository.findById(idProjetDetail).get();
+        //Affecter fils ll pere (projet detail to projet)
+        projet.setProjetDetail(projetDetail);
+        //mettre a jour le pere (projet)
+        projetRepository.save(projet);
+    }
+
+    @Override
+    public Entreprise afficherSelonNom(String nom) {
+        return entrpriseRepository.readByNom(nom);
+    }
+
+    @Override
+    public List<Entreprise> afficherEntrepriseContenantMotTriParAdd(String nom) {
+        return entrpriseRepository.streamByNomContainsOrderByAdresseAsc(nom);
+    }
+
+    @Override
+    public boolean verifierEquipe(String nom) {
+        return equipeRepository.existsByNomIgnoreCase(nom);
+    }
+
+    @Override
+    public List<Equipe> AffEquipeContenntintUnDomainTrieeParEntNom(Domaine domain) {
+        return equipeRepository.streamByDomaineOrderByEntrepriseNomDesc(domain);
+    }
+
+
 }
 
 // ======================================================================
