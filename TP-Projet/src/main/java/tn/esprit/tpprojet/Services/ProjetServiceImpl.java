@@ -36,6 +36,8 @@ public class ProjetServiceImpl implements IProjetServices{
     @Autowired
     private EquipeRepository equipeRepository;
 
+    private MapperProjet mapperProjet;
+
     /*
      * Champ INJECTION (current - @Autowired on field)
      * ------------------------------------------------
@@ -145,11 +147,12 @@ public class ProjetServiceImpl implements IProjetServices{
     }
 
     @Override
-    public Projet afficherProjetSelonID(long idProjet) {
+    public ProjetDTO afficherProjetSelonID(long idProjet) {
         // findById() returns Optional<Projet>
         // .get() retrieves the actual Projet (throws exception if not found)
         // Better practice: .orElse(null) or .orElseThrow()
-        return projetRepository.findById(idProjet).get();
+        Projet projet = projetRepository.findById(idProjet).get();
+        return mapperProjet.convertToDTO(projet);
         //get by id trj3 projet direct jawha behy ama bech yfs5ouha fel verion el jeya donc lawa7 nest3mo find by id mais trj3lnaa optinal<projet> ken ml9atouch trj3 .empty donc nzidoo .get() find all mtes7a9tech
 
     }
@@ -197,6 +200,55 @@ public class ProjetServiceImpl implements IProjetServices{
     @Override
     public List<Equipe> AffEquipeContenntintUnDomainTrieeParEntNom(Domaine domain) {
         return equipeRepository.streamByDomaineOrderByEntrepriseNomDesc(domain);
+    }
+
+    @Override
+    public Set<Entreprise> AfficherSelonAdresseQuery(String adresse) {
+        return entrpriseRepository.afficherSelonAddresseN(adresse);
+    }
+
+    @Override
+    public Set<Entreprise> AfficherSelonDomain(Domaine domaine) {
+        return entrpriseRepository.afficherSelonEq(domaine);
+    }
+
+    @Override
+    public Set<Projet> AfficherSelonCout(long cout , String technologie) {
+        return projetRepository.afficherSelonCout(cout , technologie);
+    }
+
+    @Override
+    public void ajoutProj(String sujet) {
+         projetRepository.ajouerProj(sujet);
+    }
+
+    @Override
+    public void ModifyProj(String sujet, long id) {
+        projetRepository.updateProj(sujet , id); ;
+    }
+
+    @Override
+    public void SeuppProj(long id) {
+projetRepository.deleteProj(id);
+    }
+
+    @Override
+    public ProjetDetailDTO GetdetaildPRojet(long idDetailP) {
+      //  return projetRepository.findById(idDetailP).get();
+        ProjetDetail projetDetail = projetDetailRepository.findById(idDetailP).get();
+        return convertDTO(projetDetail);
+    }
+
+
+    //maaping manulel de proj dt too proj dtal dto
+    ProjetDetailDTO convertDTO(ProjetDetail projetDetail)
+    {
+        ProjetDetailDTO projetDetailDTO = new ProjetDetailDTO();
+        projetDetailDTO.setDescription(projetDetailDTO.getDescription());
+        projetDetailDTO.setTechnologie(projetDetailDTO.getTechnologie());
+        projetDetailDTO.setDeteDebut(projetDetailDTO.getDeteDebut());
+
+        return projetDetailDTO;
     }
 
 

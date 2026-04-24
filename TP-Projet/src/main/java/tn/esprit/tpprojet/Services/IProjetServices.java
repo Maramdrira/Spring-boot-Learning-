@@ -1,9 +1,8 @@
 package tn.esprit.tpprojet.Services;
 
-import tn.esprit.tpprojet.Entities.Domaine;
-import tn.esprit.tpprojet.Entities.Entreprise;
-import tn.esprit.tpprojet.Entities.Equipe;
-import tn.esprit.tpprojet.Entities.Projet;
+import jakarta.transaction.Transactional;
+import tn.esprit.tpprojet.Entities.*;
+
 import java.util.List;
 import java.util.Set;
 
@@ -57,7 +56,7 @@ public interface IProjetServices {
      *   Projet projet = projetService.afficherProjetSelonID(1L);
      *   if(projet != null) { // do something }
      */
-    Projet afficherProjetSelonID(long idProjet);
+    ProjetDTO afficherProjetSelonID(long idProjet);
 
     /**
      * Updates an existing project
@@ -87,6 +86,25 @@ public interface IProjetServices {
     boolean verifierEquipe(String nom);
 
     List<Equipe> AffEquipeContenntintUnDomainTrieeParEntNom(Domaine domain);
+
+
+
+    Set<Entreprise> AfficherSelonAdresseQuery(String adresse);
+Set<Entreprise> AfficherSelonDomain(Domaine domaine);
+
+Set<Projet> AfficherSelonCout( long cout , String technologie);
+
+
+@Transactional //ki tbda me l repo @modififing
+void   ajoutProj(String sujet);
+
+@Transactional
+void ModifyProj(String sujet, long id);
+
+@Transactional
+    void SeuppProj(long id);
+
+ProjetDetailDTO GetdetaildPRojet(long idDetailP);
 }
 
 // ======================================================================

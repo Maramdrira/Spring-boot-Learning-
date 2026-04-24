@@ -2,10 +2,16 @@
 
 package tn.esprit.tpprojet.Repositories;
 
+import jakarta.websocket.server.PathParam;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import tn.esprit.tpprojet.Entities.Domaine;
 import tn.esprit.tpprojet.Entities.Entreprise;
+import tn.esprit.tpprojet.Entities.Projet;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * REPOSITORY EXPLANATION:
@@ -43,6 +49,26 @@ public interface EntrpriseRepository extends JpaRepository<Entreprise, Long> {
 
     Entreprise readByNom(String nom);
 List<Entreprise> streamByNomContainsOrderByAdresseAsc(String nom);
+
+
+// jpql parametre nomeee
+    @Query("select e from Entreprise e where e.adresse= :adresseE")
+    Set<Entreprise> afficherSelonAddresseN(@Param("adresseE")String adresse);
+
+
+    //jpql parametre posistionelle
+    @Query("select e from Entreprise e where e.adresse= ?1")
+    Set<Entreprise> afficherSelonAddressePos(String adresse);
+
+    @Query(value = "select * from entreprise e where e.adress= :adresseE" , nativeQuery = true)
+    Set<Entreprise> afficherSelonAddresseSql(@Param("adresseE") String adresse);
+
+
+    @Query("select e from Entreprise e join e.equipes eq where eq.domaine= :domaineE")
+    Set<Entreprise> afficherSelonEq(@Param("domaineE")Domaine domaine);
+
+
+
     // No methods needed here!
     // JpaRepository already provides:
     // - save() - insert or update

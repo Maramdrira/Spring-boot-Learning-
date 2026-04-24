@@ -20,6 +20,7 @@ public class Entreprise {
     Long idEntreprise;  // Company ID
 
     String nom;      // Company name
+    @Column(name = "adress")
     String adresse;  // Company address
 
     /**

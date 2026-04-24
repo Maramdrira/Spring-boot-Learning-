@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Generated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tn.esprit.tpprojet.Entities.Domaine;
-import tn.esprit.tpprojet.Entities.Entreprise;
-import tn.esprit.tpprojet.Entities.Equipe;
-import tn.esprit.tpprojet.Entities.Projet;
+import tn.esprit.tpprojet.Entities.*;
 import tn.esprit.tpprojet.Services.IProjetServices;
 import tn.esprit.tpprojet.Services.ProjetServiceImpl;
 
@@ -147,8 +144,8 @@ public class ProjetRestController {
 
      * Response: Returns single Projet object as JSON
      */
-    @GetMapping("/getProjetById/{idP}")
-    Projet getProjetById(@PathVariable("idP") long idProjet){  // @PathVariable extracts from URL
+    @GetMapping("/getProjetById/{idProjet}")
+    ProjetDTO getProjetById(@PathVariable("idProjet") long idProjet){  // @PathVariable extracts from URL
         return projetServices.afficherProjetSelonID(idProjet);
     }
 
@@ -211,6 +208,47 @@ public class ProjetRestController {
     List<Equipe> AffEquipeContenntintUnDomainTrieeParEntNom(@PathVariable ("domaine") Domaine domaine){
         return projetServices.AffEquipeContenntintUnDomainTrieeParEntNom(domaine);
     }
+
+
+    @GetMapping("AfficherEntSelonAdresseN/{adresse}")
+    Set<Entreprise> afficherEntSelonAdresseN(@PathVariable("adresse") String adresse) {
+        return projetServices.AfficherSelonAdresseQuery(adresse);
+    }
+
+        @GetMapping("AfficherEntSelonDomain/{domaine}")
+        Set<Entreprise> afficherEntSelonDomain(@PathVariable("domaine") Domaine domaine){
+            return projetServices.AfficherSelonDomain(domaine);
+
+
+    }
+
+    @GetMapping("AfficherEntSelonCout/{cout}/{tech}")
+    Set<Projet> afficherEntSelonCout( @PathVariable("cout")  long cout ,  @PathVariable("tech")String technologie){
+        return projetServices.AfficherSelonCout(cout , technologie);
+
+
+    }
+
+
+    @PostMapping("ajouPorj/{sujet}")
+    void ajouProj(@PathVariable("sujet") String sujet){
+        projetServices.ajoutProj(sujet);
+    }
+
+    @PutMapping("modProj/{sujet}/{id}")
+    void modProj(@PathVariable("sujet") String sujet , @PathVariable("id") long id ){
+        projetServices.ModifyProj(sujet , id);
+    }
+
+    @DeleteMapping("delProj/{id}")
+    void delProj(@PathVariable("id") long id){
+        projetServices.SeuppProj(id);
+    }
+
+@GetMapping("afficherSelonDTO/{idDEtilP}")
+    ProjetDetailDTO getDetailProjDTo(@PathVariable("idDEtilP") long idDEtilP){
+        return projetServices.GetdetaildPRojet(idDEtilP);
+}
 
 
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity  // Marks this class as a JPA entity mapped to database table
@@ -26,7 +27,7 @@ public class ProjetDetail {
     // Other TemporalType options:
     // - TemporalType.TIME: stores only time (HH:MM:SS)
     // - TemporalType.TIMESTAMP: stores both date and time
-    Date dateDebut;  // Project start date
+    LocalDate dateDebut;  // Project start date
 
     @OneToOne(mappedBy = "projetDetail")  // One-to-One relationship with Projet (inverse side)
     // "mappedBy = 'projetDetail'" means the Projet entity owns the relationship (as defined in Projet class)
