@@ -34,7 +34,6 @@ public interface IProjetDetailServices {
     List<ProjetDetail> trouverParCoutSuperieurA(Long cout);
     List<ProjetDetail> trouverParCoutEntre(Long minCout, Long maxCout);
     boolean existeParDescription(String description);
-    long compterParTechnologie(String technologie);
 
     // ========== DELETE METHODS ==========
     void supprimerParTechnologie(String technologie);
@@ -46,7 +45,6 @@ public interface IProjetDetailServices {
 
     // ========== JOINS WITH PROJET ==========
     List<ProjetDetail> trouverParSujetProjet(String sujet);
-    ProjetDetail trouverParIdProjet(Long projetId);
 
     // ========== AGGREGATION FUNCTIONS ==========
     Double obtenirCoutMoyenParTechnologie(String technologie);
@@ -61,33 +59,23 @@ public interface IProjetDetailServices {
      * Counts project details by technologie
      * @return List of Object arrays [technologie, count]
      */
-    List<Object[]> compterParTechnologieGroupe();
     List<Object[]> obtenirCoutMoyenParTechnologieGroupe();
 
     // ========== DATE-BASED QUERIES ==========
 
-    List<ProjetDetail> trouverParDateDebutApres(LocalDate date);
-    List<ProjetDetail> trouverParDateDebutAvant(LocalDate date);
-    List<ProjetDetail> rechercherParMotCleDescription(String keyword);
-    List<ProjetDetail> rechercherParMotCleTechnologie(String keyword);
+
     List<ProjetDetail> trouverEntreDates(LocalDate startDate, LocalDate endDate);
     List<ProjetDetail> trouverParAnnee(int year);
 
     // ========== UPDATE/MODIFYING OPERATIONS ==========
     int augmenterCoutPourTechnologie(Long amount, String technologie);
     int mettreAJourDescription(Long id, String newDescription);
-    int mettreAJourDateDebut(Long id, LocalDate newDate);
-    int augmenterCoutDe10PourCentPourCoutInferieur(Long maxCout);
 
     // ========== RELATIONSHIP METHODS ==========
     void assignerProjetDetailAProjet(Long projetDetailId, Long projetId);
-    List<ProjetDetail> obtenirTousLesProjetDetailsAssignes();
-    List<ProjetDetail> obtenirTousLesProjetDetailsNonAssignes();
 
     // ========== BULK OPERATIONS ==========
     int supprimerProjetDetailsAvecCoutInferieur(Long maxCout);
-    int supprimerProjetDetailsAvantDate(LocalDate date);
-    int supprimerProjetDetailsParTechnologie(String technologie);
 
 
     // ========== NEW AFFECTATION METHODS (UNCOMMENT WHAT YOU NEED) ==========

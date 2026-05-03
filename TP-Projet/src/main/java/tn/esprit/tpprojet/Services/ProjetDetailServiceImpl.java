@@ -400,6 +400,7 @@ public class ProjetDetailServiceImpl implements IProjetDetailServices {
     }
     */
 
+
     /*
     // ========== CAS 3: Affecter Projet à une Equipe existante ==========
     // Quand: Projet et Equipe existent déjà dans la BD

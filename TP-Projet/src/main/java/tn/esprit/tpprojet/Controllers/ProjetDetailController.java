@@ -115,10 +115,7 @@ public class ProjetDetailController {
         return projetDetailServices.trouverParSujetProjet(sujet);
     }
 
-    @GetMapping("/by-project/{projetId}")
-    ProjetDetail findByProjectId(@PathVariable("projetId") Long projetId) {
-        return projetDetailServices.trouverParIdProjet(projetId);
-    }
+
 
     // =====================================================================================
     // AGGREGATION FUNCTIONS
@@ -153,39 +150,14 @@ public class ProjetDetailController {
     // GROUP BY
     // =====================================================================================
 
-    @GetMapping("/count-by-technologie")
-    List<Object[]> countByTechnologie() {
-        return projetDetailServices.compterParTechnologieGroupe();
-    }
+
 
     @GetMapping("/avg-cout-by-technologie")
     List<Object[]> getAverageCoutByTechnologieGrouped() {
         return projetDetailServices.obtenirCoutMoyenParTechnologieGroupe();
     }
 
-    // =====================================================================================
-    // DATE-BASED QUERIES
-    // =====================================================================================
 
-    @GetMapping("/date/after")
-    List<ProjetDetail> findByDateDebutApres(@RequestParam("date") LocalDate date) {
-        return projetDetailServices.trouverParDateDebutApres(date);
-    }
-
-    @GetMapping("/date/before")
-    List<ProjetDetail> findByDateDebutAvant(@RequestParam("date") LocalDate date) {
-        return projetDetailServices.trouverParDateDebutAvant(date);
-    }
-
-    @GetMapping("/search/description")
-    List<ProjetDetail> searchByDescriptionKeyword(@RequestParam("keyword") String keyword) {
-        return projetDetailServices.rechercherParMotCleDescription(keyword);
-    }
-
-    @GetMapping("/search/technologie")
-    List<ProjetDetail> searchByTechnologieKeyword(@RequestParam("keyword") String keyword) {
-        return projetDetailServices.rechercherParMotCleTechnologie(keyword);
-    }
 
     @GetMapping("/date/between")
     List<ProjetDetail> findBetweenDates(
@@ -215,15 +187,7 @@ public class ProjetDetailController {
         return projetDetailServices.mettreAJourDescription(id, newDescription);
     }
 
-    @PutMapping("/{id}/date")
-    int updateStartDate(@PathVariable("id") Long id, @RequestParam("date") LocalDate newDate) {
-        return projetDetailServices.mettreAJourDateDebut(id, newDate);
-    }
 
-    @PutMapping("/increase-cout/by-10-percent")
-    int increaseCoutByTenPercentForProjectsUnder(@RequestParam("maxCout") Long maxCout) {
-        return projetDetailServices.augmenterCoutDe10PourCentPourCoutInferieur(maxCout);
-    }
 
     // =====================================================================================
     // RELATIONSHIP METHODS
@@ -236,16 +200,6 @@ public class ProjetDetailController {
         projetDetailServices.assignerProjetDetailAProjet(projetDetailId, projetId);
     }
 
-    @GetMapping("/assigned")
-    List<ProjetDetail> getAssignedProjetDetails() {
-        return projetDetailServices.obtenirTousLesProjetDetailsAssignes();
-    }
-
-    @GetMapping("/unassigned")
-    List<ProjetDetail> getUnassignedProjetDetails() {
-        return projetDetailServices.obtenirTousLesProjetDetailsNonAssignes();
-    }
-
     // =====================================================================================
     // BULK DELETE OPERATIONS
     // =====================================================================================
@@ -255,55 +209,79 @@ public class ProjetDetailController {
         return projetDetailServices.supprimerProjetDetailsAvecCoutInferieur(maxCout);
     }
 
-    @DeleteMapping("/bulk/before-date")
-    int deleteByDateBefore(@RequestParam("date") LocalDate date) {
-        return projetDetailServices.supprimerProjetDetailsAvantDate(date);
-    }
 
-    @DeleteMapping("/bulk/technologie/{technologie}")
-    int deleteByTechnologieBulk(@PathVariable("technologie") String technologie) {
-        return projetDetailServices.supprimerProjetDetailsParTechnologie(technologie);
-    }
-
-    // =====================================================================================
-    // AFFECTATION METHODS (CAS 1-6 from your PDF - COMMENTED)
-    // =====================================================================================
+// =====================================================================================
+// AFFECTATION & DESAFFECTATION METHODS (CAS 1-6)
+// =====================================================================================
 
     /*
-    // ========== CAS 1: Ajouter Projet et ProjetDetail en même temps ==========
-    // Déjà fait dans ProjetController avec cascade!
-    // URL: POST /Projet/addProjet
-    // Body: {"sujet":"...", "projetDetail":{...}}
-    */
+     * ========== CAS 1: Ajouter Projet et ProjetDetail en même temps ==========
+     * Déjà fait! CascadeType.ALL in Projet entity handles this automatically.
+     * URL: POST /Projet/addProjet
+     * Body: {"sujet":"...", "projetDetail":{"description":"...", "technologie":"...", "cout":..., "dateDebut":"..."}}
+     */
 
+    // ========== CAS 2: Affecter ProjetDetail existant à Projet existant ==========
     /*
-    // ========== CAS 2: Affecter ProjetDetail à Projet existant ==========
-    // URL: PUT /projet-detail/affecter/{projetDetailId}/to-projet/{projetId}
-    @PutMapping("/affecter/{projetDetailId}/to-projet/{projetId}")
-    void affecterProjetDetailToProjet(
-            @PathVariable("projetDetailId") Long projetDetailId,
-            @PathVariable("projetId") Long projetId) {
-        projetDetailServices.assignerProjetDetailAProjet(projetDetailId, projetId);
-    }
-    */
+     * URL: PUT http://localhost:8089/tpProjet/Projet/affecter-projet-detail/1/1
+     * Body: none
+     * Description: Assign existing ProjetDetail to existing Projet
+     *
+    @PutMapping("/affecter-projet-detail/{projetId}/{projetDetailId}")
+    public void affecterProjetDetailToProjet(
+            @PathVariable("projetId") Long projetId,
+            @PathVariable("projetDetailId") Long projetDetailId) {
+        projetServices.assignProjetDetailToProjet(projetId, projetDetailId);
+    }*/
 
+    // ========== CAS 3: Affecter Projet existant à Equipe existante ==========
     /*
-    // ========== CAS 3: Affecter Projet à Equipe ==========
-    // Fait dans ProjetController
-    */
+     * URL: PUT http://localhost:8089/tpProjet/Projet/affecter-projet-equipe/1/1
+     * Body: none
+     * Description: Assign existing Projet to existing Equipe
+     *
+    @PutMapping("/affecter-projet-equipe/{projetId}/{equipeId}")
+    public void affecterProjetToEquipe(
+            @PathVariable("projetId") Long projetId,
+            @PathVariable("equipeId") Long equipeId) {
+        projetServices.assignProjetToEquipe(projetId, equipeId);
+    }*/
 
+    // ========== CAS 4: Créer nouveau Projet + affecter à ProjetDetail existant ==========
     /*
-    // ========== CAS 4: Créer Projet + affecter à ProjetDetail existant ==========
-    // Fait dans ProjetController
-    */
+     * URL: POST http://localhost:8089/tpProjet/Projet/creer-projet-et-affecter/1
+     * Body: {"sujet": "Nouveau projet"}
+     * Description: Create new Projet and assign to existing ProjetDetail
+     * Note: Do NOT include projetDetail in body!
 
-    /*
+    @PostMapping("/creer-projet-et-affecter/{projetDetailId}")
+    public Projet creerProjetEtAffecterProjetDetail(
+            @RequestBody Projet projet,
+            @PathVariable("projetDetailId") Long projetDetailId) {
+        return projetServices.addProjetAndAssignToExistingProjetDetail(projet, projetDetailId);
+    }*/
+
     // ========== CAS 5: Désaffecter ProjetDetail de Projet ==========
-    // Ajouter dans ProjetController
-    */
-
     /*
+     * URL: PUT http://localhost:8089/tpProjet/Projet/desaffecter-projet-detail/1
+     * Body: none
+     * Description: Remove ProjetDetail from Projet (set to null)
+
+    @PutMapping("/desaffecter-projet-detail/{projetId}")
+    public Projet desaffecterProjetDetailFromProjet(@PathVariable("projetId") Long projetId) {
+        return projetServices.desaffecterProjetDetailFromProjet(projetId);
+    }*/
+
     // ========== CAS 6: Désaffecter Projet de Equipe ==========
-    // Ajouter dans ProjetController
-    */
+    /*
+     * URL: PUT http://localhost:8089/tpProjet/Projet/desaffecter-projet-equipe/1/1
+     * Body: none
+     * Description: Remove Projet from Equipe
+
+    @PutMapping("/desaffecter-projet-equipe/{projetId}/{equipeId}")
+    public void desaffecterProjetFromEquipe(
+            @PathVariable("projetId") Long projetId,
+            @PathVariable("equipeId") Long equipeId) {
+        projetServices.desaffecterProjetFromEquipe(projetId, equipeId);
+    }*/
 }

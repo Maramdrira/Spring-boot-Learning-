@@ -107,7 +107,150 @@ public interface ProjetDetailRepository extends JpaRepository<ProjetDetail, Long
 
     @Query("select pd from ProjetDetail pd join pd.projet p where p.id = :projetId")
     ProjetDetail findProjetDetailByProjetId(@Param("projetId") Long projetId);
+// =====================================================================================
+// 10 HARD JPQL JOIN QUERIES - WITH EXPLANATIONS
+// =====================================================================================
 
+    // ========== QUERY 1: Simple JOIN with condition ==========
+    /*
+     * Trouver tous les ProjetDetails dont le Projet a un sujet contenant un mot-clé
+     *
+     * JOIN: ProjetDetail -> Projet
+     * Condition: p.sujet LIKE %keyword%
+     * Returns: List of ProjetDetail
+     */
+    @Query("SELECT pd FROM ProjetDetail pd JOIN pd.projet p WHERE p.sujet LIKE %:keyword%")
+    List<ProjetDetail> findProjetDetailsByProjectSubjectContaining(@Param("keyword") String keyword);
+
+    // ========== QUERY 2: JOIN with multiple conditions ==========
+    /*
+     * Trouver les ProjetDetails avec un cout > 1000 ET dont le Projet a un budget > 50000
+     *
+     * JOIN: ProjetDetail -> Projet
+     * Conditions: pd.cout > :minCout AND p.budget > :minBudget
+     * Returns: List of ProjetDetail
+     */
+    @Query("SELECT pd FROM ProjetDetail pd JOIN pd.projet p WHERE pd.cout > :minCout AND p.budget > :minBudget")
+    List<ProjetDetail> findExpensiveDetailsWithExpensiveProject(
+            @Param("minCout") Long minCout,
+            @Param("minBudget") Double minBudget);
+
+    // ========== QUERY 3: DOUBLE JOIN (ProjetDetail -> Projet -> Equipe) ==========
+    /*
+     * Trouver tous les ProjetDetails des Projets qui appartiennent à une Equipe spécifique
+     *
+     * JOIN 1: ProjetDetail -> Projet
+     * JOIN 2: Projet -> Equipe (via Many-to-Many)
+     * Condition: e.nom = :equipeNom
+     * Returns: List of ProjetDetail
+     */
+    @Query("SELECT pd FROM ProjetDetail pd JOIN pd.projet p JOIN p.equipes e WHERE e.nom = :equipeNom")
+    List<ProjetDetail> findProjetDetailsByEquipeNom(@Param("equipeNom") String equipeNom);
+
+    // ========== QUERY 4: DOUBLE JOIN with DISTINCT ==========
+    /*
+     * Trouver les ProjetDetails UNIQUES des Projets qui ont plus de 2 équipes
+     *
+     * JOIN: ProjetDetail -> Projet -> Equipe
+     * GROUP BY: pd.id
+     * HAVING: COUNT(e) > 2
+     * DISTINCT: Évite les doublons
+     * Returns: List of distinct ProjetDetail
+     */
+    @Query("SELECT DISTINCT pd FROM ProjetDetail pd JOIN pd.projet p JOIN p.equipes e GROUP BY pd.id HAVING COUNT(e) > 2")
+    List<ProjetDetail> findProjetDetailsWithMoreThanTwoEquipes();
+
+    // ========== QUERY 5: JOIN with ORDER BY and LIMIT ==========
+    /*
+     * Trouver les 5 ProjetDetails les plus chers, avec leur Projet trié par cout décroissant
+     *
+     * JOIN: ProjetDetail -> Projet
+     * ORDER BY: pd.cout DESC
+     * Returns: List of ProjetDetail (first 5)
+     */
+    @Query("SELECT pd FROM ProjetDetail pd JOIN pd.projet p ORDER BY pd.cout DESC")
+    List<ProjetDetail> findTop5MostExpensiveProjetDetails(Pageable pageable);
+// Usage: findTop5MostExpensiveProjetDetails(PageRequest.of(0, 5))
+
+    // ========== QUERY 6: JOIN with BETWEEN and DATE condition ==========
+    /*
+     * Trouver les ProjetDetails dont la date de début est entre deux dates
+     * ET dont le Projet a un budget entre deux valeurs
+     *
+     * JOIN: ProjetDetail -> Projet
+     * Conditions: pd.dateDebut BETWEEN :start AND :end
+     *            p.budget BETWEEN :minBudget AND :maxBudget
+     * Returns: List of ProjetDetail
+     */
+    @Query("SELECT pd FROM ProjetDetail pd JOIN pd.projet p WHERE pd.dateDebut BETWEEN :startDate AND :endDate AND p.budget BETWEEN :minBudget AND :maxBudget")
+    List<ProjetDetail> findProjetDetailsByDateRangeAndBudgetRange(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("minBudget") Double minBudget,
+            @Param("maxBudget") Double maxBudget);
+
+    // ========== QUERY 7: JOIN with EXISTS (sous-requête) ==========
+    /*
+     * Trouver les ProjetDetails qui appartiennent à des Projets qui ont AU MOINS UNE Equipe
+     *
+     * JOIN: ProjetDetail -> Projet
+     * EXISTS: Vérifie l'existence d'au moins une équipe
+     * Returns: List of ProjetDetail
+     */
+    @Query("SELECT pd FROM ProjetDetail pd JOIN pd.projet p WHERE EXISTS (SELECT e FROM Equipe e JOIN e.projets ep WHERE ep.id = p.id)")
+    List<ProjetDetail> findProjetDetailsWhereProjectHasAtLeastOneEquipe();
+
+    // ========== QUERY 8: JOIN with SIZE function ==========
+    /*
+     * Trouver les ProjetDetails des Projets qui ont EXACTEMENT 2 équipes
+     *
+     * JOIN: ProjetDetail -> Projet
+     * SIZE(p.equipes): Compte le nombre d'équipes
+     * Condition: SIZE = 2
+     * Returns: List of ProjetDetail
+     */
+    @Query("SELECT pd FROM ProjetDetail pd JOIN pd.projet p WHERE SIZE(p.equipes) = 2")
+    List<ProjetDetail> findProjetDetailsWhereProjectHasExactlyTwoEquipes();
+
+    // ========== QUERY 9: TRIPLE JOIN (ProjetDetail -> Projet -> Equipe -> Entreprise) ==========
+    /*
+     * Trouver les ProjetDetails des Projets dont les équipes appartiennent à une Entreprise spécifique
+     *
+     * JOIN 1: ProjetDetail -> Projet
+     * JOIN 2: Projet -> Equipe
+     * JOIN 3: Equipe -> Entreprise
+     * Condition: ent.nom = :entrepriseNom
+     * Returns: List of ProjetDetail
+     */
+    @Query("SELECT DISTINCT pd FROM ProjetDetail pd " +
+            "JOIN pd.projet p " +
+            "JOIN p.equipes e " +
+            "JOIN e.entreprise ent " +
+            "WHERE ent.nom = :entrepriseNom")
+    List<ProjetDetail> findProjetDetailsByEntrepriseNom(@Param("entrepriseNom") String entrepriseNom);
+
+    // ========== QUERY 10: JOIN with AGGREGATION and GROUP BY ==========
+    /*
+     * Pour chaque Projet, afficher le nombre de ProjetDetails et le cout total
+     * (Projet peut avoir plusieurs ProjetDetails? Dans ton cas c'est One-to-One, mais pour l'exemple)
+     *
+     * JOIN: Projet -> ProjetDetail
+     * GROUP BY: p.id
+     * SELECT: COUNT(pd), SUM(pd.cout)
+     * Returns: List of Object[] where [0]=Projet, [1]=count, [2]=totalCout
+     */
+    @Query("SELECT p, COUNT(pd), SUM(pd.cout) FROM Projet p LEFT JOIN p.projetDetail pd GROUP BY p.id")
+    List<Object[]> getProjectStatisticsWithDetailCountAndTotalCout();
+
+    // ========== BONUS QUERY: JOIN with FETCH (évite LazyInitializationException) ==========
+    /*
+     * Trouver un ProjetDetail par ID et charger son Projet immédiatement (EAGER)
+     *
+     * JOIN FETCH: Charge le Projet en même temps que le ProjetDetail
+     * Utile pour éviter LazyInitializationException en dehors de la transaction
+     */
+    @Query("SELECT pd FROM ProjetDetail pd JOIN FETCH pd.projet WHERE pd.id = :id")
+    Optional<ProjetDetail> findByIdWithProject(@Param("id") Long id);
 
     // ========== AGGREGATION FUNCTIONS ==========
     @Query("select avg(pd.cout) from ProjetDetail pd where pd.technologie = :technologie")

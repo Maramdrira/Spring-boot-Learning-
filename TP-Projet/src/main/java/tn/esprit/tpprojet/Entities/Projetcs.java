@@ -101,182 +101,229 @@ public class Projetcs {
      *
      */
 
-
+// =====================================================================================
+// COMPLETE RELATIONSHIPS REFERENCE - BASED ON YOUR COURSE
+// =====================================================================================
+// In your course, they DO NOT use @JoinColumn or @JoinTable explicitly!
+// Spring Data JPA handles it automatically!
+// =====================================================================================
 
 // =====================================================================================
-//ONE-TO-ONE X → Y (Unidirectional - X knows Y, Y doesn't know X) code ken fel x
+// 1. ONE-TO-ONE UNIDIRECTIONNEL (X → Y)
 // =====================================================================================
+// Slide: Page 10-12
+// FK in X table (X knows Y, Y doesn't know X)
 
-    // CLASS X (owns the relationship)
     @Entity
-    public class X {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
-
-        @OneToOne(cascade = CascadeType.ALL)  // OPTIONAL: cascade
-        // FK in X table pointing to Y
-        private Y y;
-    }
-
-
-// =====================================================================================
-// ONE-TO-ONE X - Y (Bidirectional - both know each other)
-// =====================================================================================
-
-    // CLASS X (OWNING side - has FK)
-   @Entity
-   public class X1 {
-       @Id
-       @GeneratedValue(strategy = GenerationType.IDENTITY)
-       private Long id;
-
-       @OneToOne(cascade = CascadeType.ALL)
-       // FK in X table
-       private Y y;
-   }
-
-    // CLASS Y (INVERSE side - uses mappedBy)
-    @Entity
-    public class Y {
+    public class X1 {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
         private String name;
 
-        @OneToOne(mappedBy = "y")  // "y" = field name in X class
-        private X x;  // Reference back to X
+        @OneToOne(cascade = CascadeType.ALL)
+        private Y1 y;
     }
 
+    @Entity
+    public class Y1 {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+        private String description;
+        // NO reference back to X!
+    }
 
 // =====================================================================================
-//ONE-TO-MANY X → Y (Unidirectional - X knows Y's, Y doesn't know X) tkteb ken fel x
+// 2. ONE-TO-ONE BIDIRECTIONNEL (X ↔ Y)
 // =====================================================================================
+// Slide: Page 14-16
+// FK in X table (Parent), mappedBy on Y (Child)
+// "C'est le fils qui contient l'attribut mappedBy"
 
-
-// CLASS X (ONE side - knows many Y's)
     @Entity
     public class X2 {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
+        private String name;
 
-        @OneToMany(cascade = CascadeType.ALL)  // NO mappedBy!
-        // FK added in Y table
-        private Set<Y> yList = new HashSet<>();
+        @OneToOne(cascade = CascadeType.ALL)
+        private Y2 y;  // Parent side - NO mappedBy
     }
 
-// =====================================================================================
-// ONE-TO-MANY X - Y (Bidirectional - both know each other)
-// =====================================================================================
-
-
-// CLASS X (ONE side - INVERSE side uses mappedBy)
-public class X3 {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @OneToMany(mappedBy = "xu", cascade = CascadeType.ALL)  // mappedBy = field in Y
-    private Set<Y> yList = new HashSet<>();
-
-}
-
-    // CLASS Y (MANY side - OWNING side has FK)
+    @Entity
     public class Y2 {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
+        private String description;
 
-        @ManyToOne  // OWNING side!
-        // FK in Y table
-        private X xu;
+        @OneToOne(mappedBy = "y")  // Child side - HAS mappedBy
+        private X2 x;
     }
 
 // =====================================================================================
-//MANY-TO-ONE X → Y (Unidirectional - X knows Y, Y doesn't know X's) lkitba ken fel x
+// 3. ONE-TO-MANY UNIDIRECTIONNEL (X → Y)
 // =====================================================================================
+// Slide: Page 18-20
+// ⚠️ Creates a NEW JOIN TABLE in database!
 
-    // CLASS X (MANY side - knows its ONE Y)
+    @Entity
+    public class X3 {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+        private String name;
+
+        @OneToMany(cascade = CascadeType.ALL)  // NO mappedBy
+        private Set<Y3> yList = new HashSet<>();  // Creates join table!
+    }
+
+    @Entity
+    public class Y3 {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+        private String description;
+        // NO reference back to X!
+    }
+
+// =====================================================================================
+// 4. ONE-TO-MANY BIDIRECTIONNEL = MANY-TO-ONE BIDIRECTIONNEL (X ↔ Y)
+// =====================================================================================
+// Slide: Page 27-29 (Many-to-One Bidirectionnelle)
+// FK in Y table (Many side), mappedBy on X (One side)
+
     @Entity
     public class X4 {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
+        private String name;
 
-        @ManyToOne  // MANY X's point to ONE Y
-         // FK in X table
-        private Y y;
+        @OneToMany(mappedBy = "x", cascade = CascadeType.ALL)  // mappedBy = field in Y
+        private Set<Y4> yList = new HashSet<>();
+    }
+
+    @Entity
+    public class Y4 {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+        private String description;
+
+        @ManyToOne  // OWNING side!
+        private X4 x;  // FK in Y table
     }
 
 // =====================================================================================
-//  MANY-TO-ONE X - Y (Bidirectional - both know each other)
+// 5. MANY-TO-ONE UNIDIRECTIONNEL (X → Y)
 // =====================================================================================
+// Slide: Page 23-25
+// FK in X table (Many side)
 
-    // CLASS X (MANY side - OWNING side has FK)
     @Entity
     public class X5 {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
+        private String name;
 
-        @ManyToOne
-         // FK in X table
-        private Y5 y5;
+        @ManyToOne(cascade = CascadeType.ALL)  // FK in X table
+        private Y5 y;
     }
 
-    // CLASS Y (ONE side - INVERSE side)
     @Entity
     public class Y5 {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
-
-        @OneToMany(mappedBy = "y")  // mappedBy = field in X
-        private Set<X> xList = new HashSet<>();
+        private String description;
+        // NO reference back to X!
     }
 
 // =====================================================================================
-// MANY-TO-MANY X → Y (Unidirectional - X knows Y's, Y doesn't know X's) ken fel x w famma table jdida
+// 6. MANY-TO-ONE BIDIRECTIONNEL (X ↔ Y)
 // =====================================================================================
+// Slide: Page 27-29
+// FK in X table (Many side), mappedBy on Y (One side)
 
-    // CLASS X (OWNING side - creates join table)
     @Entity
     public class X6 {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
+        private String name;
 
-        @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-        private Set<Y> yList = new HashSet<>();
+        @ManyToOne
+        private Y6 y;  // FK in X table
+    }
+
+    @Entity
+    public class Y6 {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+        private String description;
+
+        @OneToMany(mappedBy = "y")  // mappedBy = field in X
+        private Set<X6> xList = new HashSet<>();
     }
 
 // =====================================================================================
-//MANY-TO-MANY X - Y (Bidirectional - both know each other) table jdida
+// 7. MANY-TO-MANY UNIDIRECTIONNEL (X → Y)
 // =====================================================================================
+// Slide: Page 31-33
+// ⚠️ ALWAYS creates a NEW JOIN TABLE!
 
-    // CLASS X (OWNING side - defines @JoinTable)
     @Entity
     public class X7 {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
+        private String name;
 
-        @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-        private Set<Y> yList = new HashSet<>();
+        @ManyToMany(cascade = CascadeType.ALL)  // Creates join table
+        private Set<Y7> yList = new HashSet<>();
     }
 
-    // CLASS Y (INVERSE side - uses mappedBy)
     @Entity
     public class Y7 {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
-
-        @ManyToMany(mappedBy = "yList")  // "yList" = field name in X class
-        private Set<X> xList = new HashSet<>();
+        private String description;
+        // NO reference back to X!
     }
 
+// =====================================================================================
+// 8. MANY-TO-MANY BIDIRECTIONNEL (X ↔ Y)
+// =====================================================================================
+// Slide: Page 35-37
+// ⚠️ ALWAYS creates a NEW JOIN TABLE!
+
+    @Entity
+    public class X8 {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+        private String name;
+
+        @ManyToMany(cascade = CascadeType.ALL)  // Owning side - creates join table
+        private Set<Y8> yList = new HashSet<>();
+    }
+
+    @Entity
+    public class Y8 {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+        private String description;
+
+        @ManyToMany(mappedBy = "yList")  // Inverse side - HAS mappedBy
+        private Set<X8> xList = new HashSet<>();
+    }
 
 //    1:1 = FK in one table (whoever has @JoinColumn)
 //    1:N = FK in MANY table (Y table)
@@ -295,19 +342,47 @@ public class X3 {
     /*
      * =====================================================================================
      * COMPLETE RELATIONSHIP REFERENCE TABLE
-     * =====================================================================================
-     * Relationship | Direction    | Where is FK? | New Table? | mappedBy on? | Cascade on? |
-     * =============|==============|==============|============|==============|=============|
-     * 1:1          | X→Y (uni)    | X table      | No         | Not used     | Either side |
-     * 1:1          | X-Y (bi)     | X table      | No         | Y class      | Either side |
-     * 1:N          | X→Y (uni)    | Y table      | No         | Not used     | X side      |
-     * 1:N          | X-Y (bi)     | Y table      | No         | X class (One) | X side      |
-     * N:1          | X→Y (uni)    | X table      | No         | Not used     | X side      |
-     * N:1          | X-Y (bi)     | X table      | No         | Y class (One) | X side      |
-     * N:N          | X→Y (uni)    | Neither      | YES!       | Not used     | Either side |
-     * N:N          | X-Y (bi)     | Neither      | YES!       | Y class (inv) | X side (own)
-     * =====================================================================================
-     *
+/*
+ * =====================================================================================
+ * RELATIONSHIP REFERENCE TABLE (Based on Course Slides)
+ * =====================================================================================
+ *
+ * RULE: mappedBy goes on CHILD (Fils) entity!
+ *       Foreign Key goes in PARENT table!
+ *
+/*
+ * =====================================================================================
+ * COMPLETE RELATIONSHIP REFERENCE - WITH NEW TABLE CASES
+ * =====================================================================================
+ *
+ * ⚠️ NEW TABLE IS CREATED IN 2 CASES:
+ *    1. Many-to-Many (N:N) - ALWAYS creates a join table
+ *    2. One-to-Many Unidirectional (1:N uni) - JPA creates a join table!
+ *
+ * =====================================================================================
+ * Relationship | Direction    | Where is FK? | New Table? | mappedBy on? | Cascade on? | @JoinColumn?
+ * =============|==============|==============|============|==============|=============|=============
+ * 1:1          | X→Y (uni)    | X table      | ❌ No      | Not used     | Either side | Not needed
+ * 1:1          | X-Y (bi)     | X table      | ❌ No      | Y (Child)    | X (Parent)  | Not needed
+ * ---------------------------------------------------------------------------------------------------
+ * 1:N          | X→Y (uni)    | JOIN TABLE!  | ✅ YES!    | Not used     | X side      | Not needed
+ * 1:N          | X-Y (bi)     | Y table      | ❌ No      | X (One side) | X side      | Not needed
+ * ---------------------------------------------------------------------------------------------------
+ * N:1          | X→Y (uni)    | X table      | ❌ No      | Not used     | X side      | Not needed
+ * N:1          | X-Y (bi)     | X table      | ❌ No      | Y (One side) | X side      | Not needed
+ * ---------------------------------------------------------------------------------------------------
+ * N:N          | X→Y (uni)    | JOIN TABLE!  | ✅ YES!    | Not used     | Either side | Not needed
+ * N:N          | X-Y (bi)     | JOIN TABLE!  | ✅ YES!    | Y (Child)    | X (Parent)  | Not needed
+ * =====================================================================================
+ *
+ * EXPLANATION:
+ * - 1:N Unidirectional: JPA creates a join table because there's no @JoinColumn on the Many side
+ * - 1:N Bidirectional: FK in the Many side table (Y table) - NO join table
+ * - N:N: ALWAYS creates a join table (both uni and bidirectional)
+ *
+ * IMPORTANT: In your course, they DON'T use @JoinColumn explicitly!
+ *            Spring Data JPA handles it automatically!
+ *
      * LEGEND:
      * - X→Y (uni)     = Unidirectional (X knows Y, Y doesn't know X)
      * - X-Y (bi)      = Bidirectional (both know each other)

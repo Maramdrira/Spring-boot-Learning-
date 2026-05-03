@@ -1,4 +1,8 @@
 package tn.esprit.examentv.Repositories;
 
-public interface TestRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import tn.esprit.examentv.Entities.TestExam;
+
+public interface TestRepository extends JpaRepository<TestExam, Long> {
+
 }
