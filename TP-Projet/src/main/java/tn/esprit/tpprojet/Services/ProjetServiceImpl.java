@@ -1,8 +1,11 @@
 package tn.esprit.tpprojet.Services;
 
+import ch.qos.logback.core.util.FixedDelay;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tn.esprit.tpprojet.Entities.*;
 import tn.esprit.tpprojet.Repositories.EntrpriseRepository;
@@ -12,6 +15,7 @@ import tn.esprit.tpprojet.Repositories.ProjetDetailRepository;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service  // Marks this class as a Spring Service bean (business logic layer)
 @AllArgsConstructor  // Lombok: generates constructor with all arguments (for constructor injection)
 public class ProjetServiceImpl implements IProjetServices{
@@ -237,6 +241,13 @@ projetRepository.deleteProj(id);
       //  return projetRepository.findById(idDetailP).get();
         ProjetDetail projetDetail = projetDetailRepository.findById(idDetailP).get();
         return convertDTO(projetDetail);
+    }
+
+    @Scheduled(cron = "* * * * * *")
+    @Override
+    public void AfficherMSG() {
+        System.out.println("hello arctitc7");
+        log.info("Bonjouuur");
     }
 
 

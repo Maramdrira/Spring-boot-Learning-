@@ -105,6 +105,9 @@ void ModifyProj(String sujet, long id);
     void SeuppProj(long id);
 
 ProjetDetailDTO GetdetaildPRojet(long idDetailP);
+
+
+void AfficherMSG();
 }
 
 // ======================================================================
